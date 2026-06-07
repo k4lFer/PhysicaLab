@@ -1,10 +1,10 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HomeScreen } from '@/presentation/screens/HomeScreen';
+import { CoulombScreen } from '@/presentation/screens/CoulombScreen';
 
-export default function Index() {
+export default function Coulomb() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <HomeScreen />
+      <CoulombScreen />
     </SafeAreaView>
   );
 }
