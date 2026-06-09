@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
 import { router } from 'expo-router';
 import { PageContainer } from '@/presentation/components/ui/PageContainer';
@@ -49,8 +49,6 @@ export function HomeScreen() {
 
 function ModulesView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
   const available = REGISTRY.filter(m => m.available);
-  const soon = REGISTRY.filter(m => !m.available);
-  const isDark = theme.text === '#ffffff';
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
@@ -61,7 +59,7 @@ function ModulesView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
         </Text>
         <View style={[styles.badge, { borderColor: theme.border }]}>
           <Text style={[styles.badgeText, { color: theme.textSecondary }]}>
-            Sears-Zemansky 12.ª ed. · Cap. 21–44
+            Sears-Zemansky 12.ª ed.
           </Text>
         </View>
       </View>
@@ -82,6 +80,7 @@ function ModulesView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
         ))}
       </View>
 
+      {/* PRÓXIMAMENTE — sección oculta temporalmente
       <View style={styles.section}>
         <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>PRÓXIMAMENTE</Text>
         <View style={styles.grid2}>
@@ -96,6 +95,7 @@ function ModulesView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
           ))}
         </View>
       </View>
+      */}
 
       <View style={[styles.footer, { borderTopColor: theme.border }]}>
         <Text style={[styles.footerText, { color: theme.textSecondary }]}>
@@ -107,7 +107,6 @@ function ModulesView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
 }
 
 function AboutView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
-  const isDark = theme.text === '#ffffff';
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
@@ -118,8 +117,7 @@ function AboutView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
         <View style={[styles.aboutCard, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
           <Text style={[styles.aboutHeading, { color: theme.text }]}>Acerca de</Text>
           <Text style={[styles.aboutText, { color: theme.textSecondary }]}>
-            Calculadora de física para estudiantes de ingeniería. Basada en los capítulos 21 a 44 del
-            Sears-Zemansky (12.ª edición).
+            Calculadora de física para estudiantes de ingeniería.
           </Text>
         </View>
 
@@ -131,6 +129,11 @@ function AboutView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
           <Text style={[styles.aboutText, { color: theme.textSecondary, marginTop: 4 }]}>
             Ingeniería Informática y Sistemas
           </Text>
+          <Pressable onPress={() => Linking.openURL('https://github.com/k4lFer')} style={styles.githubLink}>
+            <Text style={[styles.githubText, { color: theme.accent }]}>
+              {'🐙 '}github.com/k4lFer
+            </Text>
+          </Pressable>
         </View>
 
         <View style={[styles.aboutCard, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
@@ -147,27 +150,27 @@ function AboutView({ theme }: { theme: ReturnType<typeof usePhysicsTheme> }) {
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 20 },
   hero: { alignItems: 'center', paddingVertical: 28, paddingHorizontal: 24, borderBottomWidth: 1, marginHorizontal: 16 },
-  title: { fontSize: Platform.OS === 'web' ? 28 : 24, fontWeight: '700' },
-  sub: { fontSize: Platform.OS === 'web' ? 14 : 12, marginTop: 4, textAlign: 'center' },
-  badge: { borderWidth: 1, borderRadius: 9999, paddingVertical: 4, paddingHorizontal: 12, marginTop: 10 },
-  badgeText: { fontSize: Platform.OS === 'web' ? 12 : 10 },
+  title: { fontSize: Platform.OS === 'web' ? 30 : 26, fontWeight: '700' },
+  sub: { fontSize: Platform.OS === 'web' ? 16 : 14, marginTop: 4, textAlign: 'center' },
+  badge: { borderWidth: 1, borderRadius: 9999, paddingVertical: 5, paddingHorizontal: 14, marginTop: 10 },
+  badgeText: { fontSize: Platform.OS === 'web' ? 13 : 11 },
   section: { paddingHorizontal: 16, paddingTop: 16 },
-  sectionLabel: { fontSize: Platform.OS === 'web' ? 13 : 11, fontWeight: '600', letterSpacing: 0.5, paddingBottom: 8 },
+  sectionLabel: { fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '600', letterSpacing: 0.5, paddingBottom: 8 },
   card: {
-    flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14,
+    flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16,
     borderRadius: 10, borderWidth: 1, marginBottom: 7,
   },
   cardCompact: {
     width: '48%', padding: 12, borderRadius: 10, borderWidth: 1, gap: 4, flexGrow: 1,
   },
-  cardIcon: { fontSize: Platform.OS === 'web' ? 30 : 26, flexShrink: 0 },
+  cardIcon: { fontSize: Platform.OS === 'web' ? 32 : 28, flexShrink: 0 },
   cardIconSm: { fontSize: Platform.OS === 'web' ? 24 : 20 },
-  cardTitle: { fontSize: Platform.OS === 'web' ? 16 : 14, fontWeight: '600', marginBottom: 2 },
+  cardTitle: { fontSize: Platform.OS === 'web' ? 17 : 15, fontWeight: '600', marginBottom: 2 },
   cardTitleSm: { fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '600', marginBottom: 2 },
-  cardSub: { fontSize: Platform.OS === 'web' ? 13 : 11, lineHeight: Platform.OS === 'web' ? 18 : 15 },
+  cardSub: { fontSize: Platform.OS === 'web' ? 14 : 12, lineHeight: Platform.OS === 'web' ? 19 : 16 },
   grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   footer: { padding: 14, borderTopWidth: 1, alignItems: 'center', marginTop: 24, marginHorizontal: 16 },
-  footerText: { fontSize: Platform.OS === 'web' ? 12 : 10 },
+  footerText: { fontSize: Platform.OS === 'web' ? 13 : 11 },
 
   // Tab bar
   tabBar: {
@@ -176,13 +179,15 @@ const styles = StyleSheet.create({
   tabItem: {
     flex: 1, alignItems: 'center', paddingVertical: 10, borderTopWidth: 2, borderTopColor: 'transparent',
   },
-  tabText: { fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '500' },
+  tabText: { fontSize: Platform.OS === 'web' ? 15 : 13, fontWeight: '500' },
 
   // About
   aboutSection: { padding: 16, gap: 12 },
-  aboutTitle: { fontSize: Platform.OS === 'web' ? 28 : 22, fontWeight: '700', textAlign: 'center' },
-  aboutVersion: { fontSize: Platform.OS === 'web' ? 14 : 12, textAlign: 'center', marginBottom: 8 },
-  aboutCard: { borderRadius: 10, borderWidth: 1, padding: 14 },
-  aboutHeading: { fontSize: Platform.OS === 'web' ? 16 : 14, fontWeight: '600', marginBottom: 6 },
-  aboutText: { fontSize: Platform.OS === 'web' ? 14 : 12, lineHeight: Platform.OS === 'web' ? 20 : 17 },
+  aboutTitle: { fontSize: Platform.OS === 'web' ? 30 : 24, fontWeight: '700', textAlign: 'center' },
+  aboutVersion: { fontSize: Platform.OS === 'web' ? 15 : 13, textAlign: 'center', marginBottom: 8 },
+  aboutCard: { borderRadius: 10, borderWidth: 1, padding: 16 },
+  aboutHeading: { fontSize: Platform.OS === 'web' ? 17 : 15, fontWeight: '600', marginBottom: 6 },
+  aboutText: { fontSize: Platform.OS === 'web' ? 15 : 13, lineHeight: Platform.OS === 'web' ? 21 : 18 },
+  githubLink: { marginTop: 10, alignSelf: 'flex-start' },
+  githubText: { fontSize: Platform.OS === 'web' ? 15 : 13, fontWeight: '600' },
 });

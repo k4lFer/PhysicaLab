@@ -41,7 +41,7 @@ export function CoulombScreen() {
         onBack={goBack}
         right={
           <Pressable onPress={toggleTheme} hitSlop={8}>
-            <Text style={{ fontSize: Platform.OS === 'web' ? 18 : 16, color: theme.textSecondary }}>
+            <Text style={{ fontSize: Platform.OS === 'web' ? 20 : 18, color: theme.textSecondary }}>
               {themeMode === 'light' ? '🌙' : '☀️'}
             </Text>
           </Pressable>
@@ -168,28 +168,28 @@ function ResultView({ result, tab, onTabChange, charges, mode }: {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { paddingBottom: 40 },
-  modeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: Platform.OS === 'web' ? 14 : 10, paddingHorizontal: 16 },
-  modeLabel: { fontSize: Platform.OS === 'web' ? 13 : 11 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingBottom: 10, paddingHorizontal: 16 },
+  modeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: Platform.OS === 'web' ? 16 : 12, paddingHorizontal: 16 },
+  modeLabel: { fontSize: Platform.OS === 'web' ? 15 : 13 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingBottom: 12, paddingHorizontal: 16 },
   errorBox: { borderRadius: 8, padding: 12, marginTop: 10, marginHorizontal: 16 },
-  errorText: { color: '#dc2626', fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '500' },
-  resultSection: { marginTop: 14, paddingHorizontal: 16 },
-  summary: { borderRadius: 10, padding: 16, alignItems: 'center' },
-  summaryLabel: { fontSize: Platform.OS === 'web' ? 12 : 10, fontWeight: '600', letterSpacing: 0.5, marginBottom: 6 },
+  errorText: { color: '#dc2626', fontSize: Platform.OS === 'web' ? 15 : 13, fontWeight: '500' },
+  resultSection: { marginTop: 16, paddingHorizontal: 16 },
+  summary: { borderRadius: 12, padding: 18, alignItems: 'center' },
+  summaryLabel: { fontSize: Platform.OS === 'web' ? 13 : 11, fontWeight: '600', letterSpacing: 0.5, marginBottom: 6 },
   summaryRow: { flexDirection: 'row', alignItems: 'baseline' },
-  summaryValue: { fontSize: Platform.OS === 'web' ? 38 : 32, fontWeight: '700', lineHeight: Platform.OS === 'web' ? 44 : 36 },
-  summaryUnit: { fontSize: Platform.OS === 'web' ? 16 : 14, fontWeight: '600', marginLeft: 3 },
-  summaryAngle: { fontSize: Platform.OS === 'web' ? 14 : 12, marginVertical: 3 },
-  summaryVec: { fontSize: Platform.OS === 'web' ? 13 : 11, fontFamily: 'monospace', marginTop: 2 },
-  tabRow: { flexDirection: 'row', borderBottomWidth: 1, marginTop: 14 },
-  tab: { flex: 1, paddingVertical: Platform.OS === 'web' ? 12 : 9, borderBottomWidth: 2, alignItems: 'center' },
-  tabText: { fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '500' },
-  stepsBox: { borderRadius: 10, borderWidth: 1, padding: 12, marginTop: 10, maxHeight: 500 },
-  stepsScroll: { maxHeight: 480 },
-  initData: { borderRadius: 8, padding: 10, marginBottom: 10 },
-  initDataTitle: { fontSize: Platform.OS === 'web' ? 13 : 11, fontWeight: '700', marginBottom: 6 },
-  initRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 3 },
-  initLabel: { fontSize: Platform.OS === 'web' ? 12 : 10, fontWeight: '600', flex: 1 },
-  initVal: { fontSize: Platform.OS === 'web' ? 12 : 10, fontFamily: 'monospace', flex: 2, textAlign: 'right' },
-  graphBox: { marginTop: 10, borderRadius: 10, overflow: 'hidden', borderWidth: 1 },
+  summaryValue: { fontSize: Platform.OS === 'web' ? 40 : 34, fontWeight: '700', lineHeight: Platform.OS === 'web' ? 46 : 38 },
+  summaryUnit: { fontSize: Platform.OS === 'web' ? 18 : 15, fontWeight: '600', marginLeft: 4 },
+  summaryAngle: { fontSize: Platform.OS === 'web' ? 15 : 13, marginVertical: 4 },
+  summaryVec: { fontSize: Platform.OS === 'web' ? 14 : 12, fontFamily: 'monospace', marginTop: 3 },
+  tabRow: { flexDirection: 'row', borderBottomWidth: 1, marginTop: 16 },
+  tab: { flex: 1, paddingVertical: Platform.OS === 'web' ? 14 : 11, borderBottomWidth: 2, alignItems: 'center' },
+  tabText: { fontSize: Platform.OS === 'web' ? 15 : 13, fontWeight: '500' },
+  stepsBox: { borderRadius: 12, borderWidth: 1, padding: 14, marginTop: 12, maxHeight: 520 },
+  stepsScroll: { maxHeight: 500 },
+  initData: { borderRadius: 8, padding: 12, marginBottom: 12 },
+  initDataTitle: { fontSize: Platform.OS === 'web' ? 14 : 12, fontWeight: '700', marginBottom: 6 },
+  initRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4 },
+  initLabel: { fontSize: Platform.OS === 'web' ? 13 : 11, fontWeight: '600', flex: 1 },
+  initVal: { fontSize: Platform.OS === 'web' ? 13 : 11, fontFamily: 'monospace', flex: 2, textAlign: 'right' },
+  graphBox: { marginTop: 12, borderRadius: 12, overflow: 'hidden', borderWidth: 1 },
 });
