@@ -7,6 +7,7 @@ interface MathFormulaProps {
   math: string;
   color?: string;
   style?: ViewStyle;
+  fontSize?: number;
 }
 
 function stripMathJaxAttrs(svg: string): string {
@@ -15,12 +16,15 @@ function stripMathJaxAttrs(svg: string): string {
     .replace(/ data-\w+(?:-\w+)*="[^"]*"/g, '');
 }
 
-const mathjax = MathjaxFactory({ inline: true, em: 11, ex: 5.5 });
+const defaultMathjax = MathjaxFactory({ inline: true, em: 14, ex: 7 });
 
-export function MathFormula({ math, color, style }: MathFormulaProps) {
+export function MathFormula({ math, color, style, fontSize }: MathFormulaProps) {
   const result = useMemo(() => {
     try {
-      const res = mathjax.toSVG(math);
+      const mj = fontSize
+        ? MathjaxFactory({ inline: true, em: fontSize, ex: fontSize / 2 })
+        : defaultMathjax;
+      const res = mj.toSVG(math);
       if ('error' in res) return null;
       return {
         xml: stripMathJaxAttrs(res.svg),
@@ -29,17 +33,17 @@ export function MathFormula({ math, color, style }: MathFormulaProps) {
     } catch {
       return null;
     }
-  }, [math]);
+  }, [math, fontSize]);
 
   if (!result) return null;
 
   return (
-    <View style={[styles.wrapper, style]}>
+    <View style={[styles.wrapper, { minHeight: fontSize ? fontSize + 10 : 24 }, style]}>
       <SvgXml xml={result.xml} color={color} width={result.size.width} height={result.size.height} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: { minHeight: 20, justifyContent: 'center' },
+  wrapper: { justifyContent: 'center' },
 });
