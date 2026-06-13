@@ -206,7 +206,10 @@ function ResultView({ result, tab, onTabChange, charges, mode }: {
           <ResultMetaItem label="Componente x" value={`Fₓ = ${formatNum(result.netForce.x * 1e6, 3)} μN`} color={theme.accent} />
           <ResultMetaItem label="Componente y" value={`Fᵧ = ${formatNum(result.netForce.y * 1e6, 3)} μN`} color={theme.gold} />
           {mode === '3D' && <ResultMetaItem label="Componente z" value={`F₂ = ${formatNum(result.netForce.z * 1e6, 3)} μN`} color={theme.magenta} />}
-          <ResultMetaItem label="Ángulo" value={`θ = ${formatNum(result.angleDeg, 2)}°`} color={theme.magenta} />
+          <ResultMetaItem label="Ángulo θ" value={`θ = ${formatNum(result.angleDeg, 2)}°`} color={theme.magenta} />
+          {mode === '3D' && result.anglePhiDeg !== null && (
+            <ResultMetaItem label="Ángulo φ" value={`φ = ${formatNum(result.anglePhiDeg, 2)}°`} color={theme.violet} />
+          )}
           <ResultMetaItem label="Magnitud" value={`${formatNum(result.magnitude * 1e6, 4)} μN`} color={theme.accent} />
         </View>
       </View>
