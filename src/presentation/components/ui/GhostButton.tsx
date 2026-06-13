@@ -1,10 +1,13 @@
-import { Pressable, StyleSheet, Text, type ViewStyle } from 'react-native';
+import { Children, type ReactNode } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
 
 interface GhostButtonProps {
   onPress: () => void;
-  children: string;
+  children: ReactNode;
 }
+
+const fs = Platform.OS === 'web';
 
 export function GhostButton({ onPress, children }: GhostButtonProps) {
   const theme = usePhysicsTheme();
@@ -13,10 +16,14 @@ export function GhostButton({ onPress, children }: GhostButtonProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        { borderColor: theme.border },
-        pressed && { opacity: 0.6 },
+        { borderColor: theme.borderLight },
+        pressed && { borderColor: theme.accent },
       ]}>
-      <Text style={[styles.text, { color: theme.textSecondary }]}>{children}</Text>
+      <View style={styles.inner}>
+        {Children.map(children, child =>
+          typeof child === 'string' ? <Text style={[styles.text, { color: theme.textSecondary }]}>{child}</Text> : child
+        )}
+      </View>
     </Pressable>
   );
 }
@@ -24,11 +31,18 @@ export function GhostButton({ onPress, children }: GhostButtonProps) {
 const styles = StyleSheet.create({
   button: {
     width: '100%',
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderRadius: 8,
-    marginBottom: 4,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  text: { fontSize: 12, textAlign: 'center' },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  text: { fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });

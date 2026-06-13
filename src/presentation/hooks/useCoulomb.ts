@@ -25,7 +25,7 @@ export function useCoulomb() {
   const [charges, setCharges] = useState<Charge[]>(EXAMPLE_CHARGES.map(c => ({ ...c }))); // lista de cargas
   const [targetId, setTargetId] = useState(3);                // ID de la carga objetivo
   const [result, setResult] = useState<CoulombResult | null>(null);  // resultado del cálculo
-  const [tab, setTab] = useState<'steps' | 'graph'>('steps');       // pestaña activa: pasos o gráfica
+  const [tab, setTab] = useState<'steps' | 'graph' | 'formulas'>('steps');       // pestaña activa: pasos o gráfica
   const [error, setError] = useState<string | null>(null);          // mensaje de error
 
   // Cambia entre modo 2D y 3D, reinicia el resultado
@@ -56,6 +56,7 @@ export function useCoulomb() {
 
   // Actualiza un campo específico de una carga
   // Convierte automáticamente: q se ingresa en nC → C, posición en cm → m
+  // Al modificar un valor, se limpia el resultado anterior para evitar confusion
   const updateCharge = useCallback((id: number, field: string, raw: string) => {
     setCharges(prev => prev.map(c => {
       if (c.id !== id) return c;
@@ -64,6 +65,8 @@ export function useCoulomb() {
       const multiplier = field === 'q' ? 1e-9 : 0.01;
       return { ...c, [field]: v * multiplier };
     }));
+    setResult(null);
+    setError(null);
   }, []);
 
   // Ejecuta el cálculo llamando al caso de uso CalculateForce

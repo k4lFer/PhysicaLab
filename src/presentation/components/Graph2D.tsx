@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LayoutChangeEvent, Platform, View } from 'react-native';
+import { LayoutChangeEvent, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Polygon, Rect, Text as SvgText } from 'react-native-svg';
 import type { Charge } from '@/domain/entities/Charge';
 import { COULOMB_K } from '@/shared/constants';
@@ -131,41 +131,54 @@ export function Graph2D({ charges, targetId, netForce, sources }: Graph2DProps) 
 
     const onMouseUp = () => { dragRef.current.active = false; };
 
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        dragRef.current.active = true;
+        dragRef.current.lastX = e.touches[0].clientX;
+        dragRef.current.lastY = e.touches[0].clientY;
+        dragRef.current.panX = pan.x;
+        dragRef.current.panY = pan.y;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (dragRef.current.active && e.touches.length === 1) {
+        const dx = e.touches[0].clientX - dragRef.current.lastX;
+        const dy = e.touches[0].clientY - dragRef.current.lastY;
+        setPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy });
+      }
+    };
+
+    const onTouchEnd = () => { dragRef.current.active = false; };
+
     el.addEventListener('wheel', onWheel, { passive: false });
     el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: true });
+    el.addEventListener('touchend', onTouchEnd);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
 
     return () => {
       el.removeEventListener('wheel', onWheel);
       el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
     };
   }, [pan]);
 
-  const isDark = theme.text === '#ffffff';
-
+  const isDark = theme.background === '#08080f';
   const netMag = Math.sqrt(netForce.x ** 2 + netForce.y ** 2 + netForce.z ** 2);
 
+  const zoomIn = () => setScale(prev => Math.min(5, prev * 1.25));
+  const zoomOut = () => setScale(prev => Math.max(0.3, prev / 1.25));
+  const resetView = () => { setScale(1); setPan({ x: 0, y: 0 }); };
+
   return (
-    <View ref={viewRef} onLayout={onLayout} style={{ width: '100%', alignItems: 'center' }}
-      onStartShouldSetResponder={() => true}
-      onResponderGrant={(e: any) => {
-        dragRef.current.active = true;
-        dragRef.current.lastX = e.nativeEvent.pageX;
-        dragRef.current.lastY = e.nativeEvent.pageY;
-        dragRef.current.panX = pan.x;
-        dragRef.current.panY = pan.y;
-      }}
-      onResponderMove={(e: any) => {
-        if (!dragRef.current.active) return;
-        const dx = e.nativeEvent.pageX - dragRef.current.lastX;
-        const dy = e.nativeEvent.pageY - dragRef.current.lastY;
-        setPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy });
-      }}
-      onResponderRelease={() => { dragRef.current.active = false; }}
-    >
+    <View ref={viewRef} onLayout={onLayout} style={{ width: '100%', alignItems: 'center' }}>
       <Svg width={displayW} height={displayH} viewBox={`0 0 ${W} ${H}`}>
         <G transform={`translate(${pan.x},${pan.y}) scale(${scale})`}>
           {xTicks.map(t => {
@@ -309,6 +322,18 @@ export function Graph2D({ charges, targetId, netForce, sources }: Graph2DProps) 
         <Line x1={360} y1={H - LEGEND_H + 40} x2={386} y2={H - LEGEND_H + 40} stroke={theme.componentColor} strokeWidth={2.5} />
         <SvgText x={392} y={H - LEGEND_H + 45} fill={axisColor} fontSize={12} fontWeight="500">F</SvgText>
       </Svg>
+
+      <View style={styles.zoomControls}>
+        <Pressable onPress={zoomIn} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { color: theme.text }]}>+</Text>
+        </Pressable>
+        <Pressable onPress={zoomOut} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { color: theme.text }]}>−</Text>
+        </Pressable>
+        <Pressable onPress={resetView} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { fontSize: 11, color: theme.text }]}>↺</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -360,3 +385,19 @@ function Arrow2D({ x1, y1, x2, y2, color, strokeWidth = 2, primary, sub, tag }: 
     </G>
   );
 }
+
+const styles = StyleSheet.create({
+  zoomControls: {
+    position: 'absolute',
+    bottom: 86,
+    right: 8,
+    gap: 4,
+    alignItems: 'center',
+  },
+  zoomBtn: {
+    width: 32, height: 32, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1,
+  },
+  zoomText: { fontSize: 18, fontWeight: '700' },
+});

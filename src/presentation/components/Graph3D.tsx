@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { LayoutChangeEvent, Platform, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { LayoutChangeEvent, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Polygon, Rect, Text as SvgText } from 'react-native-svg';
 import type { Charge } from '@/domain/entities/Charge';
 import { COULOMB_K } from '@/shared/constants';
@@ -35,6 +35,9 @@ export function Graph3D({ charges, targetId, netForce, sources }: Graph3DProps) 
   const theme = usePhysicsTheme();
   const [containerWidth, setContainerWidth] = useState(0);
   const [hoveredCharge, setHoveredCharge] = useState<{ id: number; sx: number; sy: number } | null>(null);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+  const dragRef = useRef({ active: false, lastX: 0, lastY: 0, panX: 0, panY: 0 });
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     setContainerWidth(e.nativeEvent.layout.width);
@@ -88,7 +91,7 @@ export function Graph3D({ charges, targetId, netForce, sources }: Graph3DProps) 
   const FS = maxF > 0 ? targetArrowLen / maxF : 1;
 
   const axisColor = theme.textSecondary;
-  const isDark = theme.text === '#ffffff';
+  const isDark = theme.background === '#08080f';
 
   const svgW = containerWidth || W;
   const graphH = H;
@@ -106,10 +109,83 @@ export function Graph3D({ charges, targetId, netForce, sources }: Graph3DProps) 
     };
   };
 
+  const viewRef = useRef<View>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !viewRef.current) return;
+    const el = viewRef.current as unknown as HTMLElement;
+
+    const onWheel = (e: WheelEvent) => {
+      const factor = e.deltaY > 0 ? 0.88 : 1 / 0.88;
+      setScale(prev => Math.max(0.3, Math.min(5, prev * factor)));
+      e.preventDefault();
+    };
+
+    const onMouseDown = (e: MouseEvent) => {
+      dragRef.current.active = true;
+      dragRef.current.lastX = e.clientX;
+      dragRef.current.lastY = e.clientY;
+      dragRef.current.panX = pan.x;
+      dragRef.current.panY = pan.y;
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (dragRef.current.active) {
+        const dx = e.clientX - dragRef.current.lastX;
+        const dy = e.clientY - dragRef.current.lastY;
+        setPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy });
+      }
+    };
+
+    const onMouseUp = () => { dragRef.current.active = false; };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        dragRef.current.active = true;
+        dragRef.current.lastX = e.touches[0].clientX;
+        dragRef.current.lastY = e.touches[0].clientY;
+        dragRef.current.panX = pan.x;
+        dragRef.current.panY = pan.y;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (dragRef.current.active && e.touches.length === 1) {
+        const dx = e.touches[0].clientX - dragRef.current.lastX;
+        const dy = e.touches[0].clientY - dragRef.current.lastY;
+        setPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy });
+      }
+    };
+
+    const onTouchEnd = () => { dragRef.current.active = false; };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: true });
+    el.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [pan]);
+
+  const zoomIn = () => setScale(prev => Math.min(5, prev * 1.25));
+  const zoomOut = () => setScale(prev => Math.max(0.3, prev / 1.25));
+  const resetView = () => { setScale(1); setPan({ x: 0, y: 0 }); };
+
   return (
-    <View onLayout={onLayout} style={{ width: '100%', alignItems: 'center' }}>
+    <View ref={viewRef} onLayout={onLayout} style={{ width: '100%', alignItems: 'center' }}>
       <Svg width={displayW} height={displayH} viewBox={`0 0 ${W} ${H}`}>
-        <G>
+        <G transform={`translate(${pan.x},${pan.y}) scale(${scale})`}>
           <Line x1={P - 8} y1={H - P} x2={W - P + 18} y2={H - P}
             stroke={axisColor + '60'} strokeWidth={1.2} />
           <SvgText x={W - P + 6} y={H - P - 6} fill={axisColor} fontSize={14} fontWeight="700" opacity={0.7}>x</SvgText>
@@ -154,7 +230,7 @@ export function Graph3D({ charges, targetId, netForce, sources }: Graph3DProps) 
                 </SvgText>
                 {isHovered && (
                   <G>
-                    <Rect x={cx + 18} y={cy - 20} width={Platform.OS === 'web' ? 200 : 200} height={38} rx={6}
+                    <Rect x={cx + 18} y={cy - 20} width={200} height={38} rx={6}
                       fill={isDark ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.9)'}
                       stroke={theme.border} strokeWidth={0.5} />
                     <SvgText x={cx + 26} y={cy - 3} fill={axisColor} fontSize={11} fontWeight="600">
@@ -202,6 +278,18 @@ export function Graph3D({ charges, targetId, netForce, sources }: Graph3DProps) 
           })()}
         </G>
       </Svg>
+
+      <View style={styles.zoomControls}>
+        <Pressable onPress={zoomIn} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { color: theme.text }]}>+</Text>
+        </Pressable>
+        <Pressable onPress={zoomOut} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { color: theme.text }]}>−</Text>
+        </Pressable>
+        <Pressable onPress={resetView} style={[styles.zoomBtn, { backgroundColor: theme.backgroundElement + 'e0', borderColor: theme.border }]}>
+          <Text style={[styles.zoomText, { fontSize: 11, color: theme.text }]}>↺</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -241,3 +329,19 @@ function Arrow3D({ x1, y1, x2, y2, color, strokeWidth = 2, primary }: Arrow3DPro
     </G>
   );
 }
+
+const styles = StyleSheet.create({
+  zoomControls: {
+    position: 'absolute',
+    bottom: 10,
+    right: 8,
+    gap: 4,
+    alignItems: 'center',
+  },
+  zoomBtn: {
+    width: 32, height: 32, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1,
+  },
+  zoomText: { fontSize: 18, fontWeight: '700' },
+});

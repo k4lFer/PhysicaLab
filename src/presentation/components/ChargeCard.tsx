@@ -11,6 +11,11 @@ interface ChargeCardProps {
 }
 
 const fs = Platform.OS === 'web';
+
+function fmt(v: number, scale: number): string {
+  return parseFloat((v * scale).toFixed(10)).toString();
+}
+
 export function ChargeCard({ charge, mode, isTarget, onUpdate, onRemove, onSetTarget }: ChargeCardProps) {
   const theme = usePhysicsTheme();
   return (
@@ -27,11 +32,11 @@ export function ChargeCard({ charge, mode, isTarget, onUpdate, onRemove, onSetTa
         </View>
       </View>
       <View style={styles.grid}>
-        <NumericInput label="q (nC)" value={(charge.q * 1e9).toString()} onChange={v => onUpdate(charge.id, 'q', v)} accent />
-        <NumericInput label="x (cm)" value={(charge.x * 100).toString()} onChange={v => onUpdate(charge.id, 'x', v)} />
-        <NumericInput label="y (cm)" value={(charge.y * 100).toString()} onChange={v => onUpdate(charge.id, 'y', v)} />
+        <NumericInput label="q (nC)" value={fmt(charge.q, 1e9)} onChange={v => onUpdate(charge.id, 'q', v)} accent />
+        <NumericInput label="x (cm)" value={fmt(charge.x, 100)} onChange={v => onUpdate(charge.id, 'x', v)} />
+        <NumericInput label="y (cm)" value={fmt(charge.y, 100)} onChange={v => onUpdate(charge.id, 'y', v)} />
         {mode === '3D' && (
-          <NumericInput label="z (cm)" value={(charge.z * 100).toString()} onChange={v => onUpdate(charge.id, 'z', v)} />
+          <NumericInput label="z (cm)" value={fmt(charge.z, 100)} onChange={v => onUpdate(charge.id, 'z', v)} />
         )}
       </View>
     </View>

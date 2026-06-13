@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, ViewStyle, StyleSheet } from 'react-native';
+import { Text, View, ViewStyle, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import MathjaxFactory from 'react-native-math-view/src/mathjax/MathjaxFactory';
 
@@ -35,7 +35,11 @@ export function MathFormula({ math, color, style, fontSize }: MathFormulaProps) 
     }
   }, [math, fontSize]);
 
-  if (!result) return null;
+  if (!result) {
+    return (
+      <Text style={{ color, fontSize: fontSize ?? 14, fontFamily: 'monospace' }}>{math}</Text>
+    );
+  }
 
   return (
     <View style={[styles.wrapper, { minHeight: fontSize ? fontSize + 10 : 24 }, style]}>

@@ -12,13 +12,17 @@ export function Pill({ active, onPress, children }: PillProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.base,
-        {
-          backgroundColor: active ? theme.accent : 'transparent',
-          borderColor: active ? theme.accent : theme.border,
+        active && {
+          backgroundColor: theme.accent + '1a',
+          borderColor: theme.accent + '4d',
+        },
+        !active && {
+          backgroundColor: 'transparent',
+          borderColor: theme.border,
         },
         pressed && styles.pressed,
       ]}>
-      <Text style={[styles.text, { color: active ? '#fff' : theme.textSecondary }]}>{children}</Text>
+      <Text style={[styles.text, { color: active ? theme.accent : theme.textSecondary }]}>{children}</Text>
     </Pressable>
   );
 }
@@ -26,5 +30,5 @@ export function Pill({ active, onPress, children }: PillProps) {
 const styles = StyleSheet.create({
   base: { paddingVertical: fs ? 6 : 5, paddingHorizontal: fs ? 26 : 20, borderRadius: 6, borderWidth: 1 },
   pressed: { opacity: 0.7 } as ViewStyle,
-  text: { fontSize: fs ? 15 : 13, fontWeight: '600' },
+  text: { fontSize: fs ? 15 : 13, fontWeight: '700' },
 });

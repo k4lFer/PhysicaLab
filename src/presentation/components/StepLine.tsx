@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MathFormula } from './MathFormula';
 import type { CoulombStep } from '@/domain/calculators/CoulombCalculator';
 import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
@@ -69,9 +69,9 @@ export function StepLine({ step }: StepLineProps) {
     return (
       <View style={[styles.resultBox, { backgroundColor: theme.resultBg }]}>
         <Text style={[styles.resultLabel, { color: theme.text }]}>{step.lbl}</Text>
-        <View style={styles.mathWrap}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.mathScroll}>
           <MathFormula math={toLatex(step.val!)} color={theme.accent} fontSize={resultFontSize} />
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -79,26 +79,25 @@ export function StepLine({ step }: StepLineProps) {
   return (
     <View style={[styles.row, { borderBottomColor: theme.border + '40' }]}>
       <Text style={[styles.lbl, { color: theme.textSecondary }]}>{step.lbl}</Text>
-      <View style={styles.mathWrap}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.mathScroll}>
         <MathFormula math={toLatex(step.val!)} color={theme.text} fontSize={formulaFontSize} />
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
-const fs = Platform.OS === 'web';
 const styles = StyleSheet.create({
   divider: { paddingVertical: 8, borderBottomWidth: 1, marginBottom: 5 },
-  dividerText: { fontSize: fs ? 15 : 13, fontWeight: '500' },
-  header: { fontSize: fs ? 15 : 13, paddingVertical: 3, fontStyle: 'italic' },
+  dividerText: { fontSize: 15, fontWeight: '500' },
+  header: { fontSize: 15, paddingVertical: 3, fontStyle: 'italic' },
   errorBox: { borderRadius: 6, paddingVertical: 8, paddingHorizontal: 10, marginVertical: 4 },
-  errorText: { fontSize: fs ? 15 : 13, color: '#dc2626', fontWeight: '500' },
+  errorText: { fontSize: 15, color: '#dc2626', fontWeight: '500' },
   resultBox: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10, marginTop: 8,
   },
-  resultLabel: { fontSize: fs ? 17 : 15, fontWeight: '600', flex: 1 },
+  resultLabel: { fontSize: 17, fontWeight: '600', flex: 1 },
   row: { paddingVertical: 8, borderBottomWidth: 0.5 },
-  lbl: { fontSize: fs ? 14 : 12, fontWeight: '500', marginBottom: 2 },
-  mathWrap: { flex: 1, alignItems: 'flex-end' },
+  lbl: { fontSize: 14, fontWeight: '500', marginBottom: 2 },
+  mathScroll: { flex: 1 },
 });

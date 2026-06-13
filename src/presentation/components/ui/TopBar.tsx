@@ -11,7 +11,7 @@ interface TopBarProps {
 export function TopBar({ title, onBack, right }: TopBarProps) {
   const theme = usePhysicsTheme();
   return (
-    <View style={[styles.container, { borderBottomColor: theme.border }]}>
+    <View style={[styles.container, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
       <Pressable onPress={onBack} style={styles.back} hitSlop={8}>
         <Text style={[styles.backText, { color: theme.accent }]}>←</Text>
       </Pressable>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   back: { paddingRight: 10, paddingVertical: 2 },
-  backText: { fontSize: 20, fontWeight: '600' },
-  title: { flex: 1, textAlign: 'center', fontSize: 15, fontWeight: '600' },
+  backText: { fontSize: 22, fontWeight: '600' },
+  title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600' },
   right: { width: 36, alignItems: 'flex-end' },
 });

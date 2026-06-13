@@ -1,4 +1,3 @@
-import { useTheme } from '@/hooks/use-theme';
 import { Colors } from '@/constants/theme';
 import { useForcedColorScheme } from './useThemeMode';
 
@@ -8,13 +7,13 @@ export function usePhysicsTheme() {
 
   return {
     ...base,
-    accent: '#2563eb',
-    positive: '#dc2626',
-    negative: '#2563eb',
-    netForce: '#2563eb',
-    componentColor: '#ca8a04',
+    accent: base.accent,
+    positive: base.positive,
+    negative: base.negative,
+    netForce: base.accent,
+    componentColor: base.gold,
     cardBg: base.backgroundElement,
     resultBg: base.backgroundSelected,
-    border: base.backgroundSelected,
+    border: base.border,
   };
 }

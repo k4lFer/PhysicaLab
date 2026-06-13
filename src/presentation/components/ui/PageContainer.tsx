@@ -1,9 +1,13 @@
 import { Platform, StyleSheet, View, type ViewProps } from 'react-native';
 
-export function PageContainer({ style, children, ...rest }: ViewProps) {
+interface PageContainerProps extends ViewProps {
+  wide?: boolean;
+}
+
+export function PageContainer({ style, children, wide, ...rest }: PageContainerProps) {
   return (
     <View style={[styles.container, style]} {...rest}>
-      <View style={styles.inner}>{children}</View>
+      <View style={[styles.inner, wide && styles.innerWide]}>{children}</View>
     </View>
   );
 }
@@ -18,5 +22,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     maxWidth: Platform.OS === 'web' ? 720 : undefined,
+  },
+  innerWide: {
+    maxWidth: Platform.OS === 'web' ? 1280 : undefined,
   },
 });
