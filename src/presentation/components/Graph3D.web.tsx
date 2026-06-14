@@ -1,3 +1,8 @@
+// ============================================================
+// Graph3D.web.tsx — Gráfica 3D interactiva (Three.js)
+// Capa: Presentación (solo web, con OrbitControls)
+// ============================================================
+
 import { useRef } from 'react';
 import { View, StyleSheet, useColorScheme } from 'react-native';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';

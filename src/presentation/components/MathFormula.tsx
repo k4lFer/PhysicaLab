@@ -1,3 +1,8 @@
+// ============================================================
+// MathFormula.tsx — Renderizador LaTeX → SVG
+// Capa: Presentación (componente de visualización de fórmulas)
+// ============================================================
+
 import { useMemo } from 'react';
 import { Text, View, ViewStyle, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -10,6 +15,7 @@ interface MathFormulaProps {
   fontSize?: number;
 }
 
+// Limpia atributos internos de MathJax del SVG generado
 function stripMathJaxAttrs(svg: string): string {
   return svg
     .replace(/ pLevel="[^"]*"/g, '')

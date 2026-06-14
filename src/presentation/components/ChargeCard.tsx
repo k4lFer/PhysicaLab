@@ -1,3 +1,8 @@
+// ============================================================
+// ChargeCard.tsx — Tarjeta de edición de una carga puntual
+// Capa: Presentación (componente de entrada de datos)
+// ============================================================
+
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Charge } from '@/domain/entities/Charge';
 import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
@@ -12,6 +17,7 @@ interface ChargeCardProps {
 
 const fs = Platform.OS === 'web';
 
+// Convierte valor interno (C, m) a display (nC, cm)
 function fmt(v: number, scale: number): string {
   return parseFloat((v * scale).toFixed(10)).toString();
 }

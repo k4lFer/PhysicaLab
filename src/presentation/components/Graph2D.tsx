@@ -1,3 +1,8 @@
+// ============================================================
+// Graph2D.tsx — Gráfica vectorial 2D interactiva (SVG)
+// Capa: Presentación (componente de visualización de fuerzas)
+// ============================================================
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LayoutChangeEvent, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Polygon, Rect, Text as SvgText } from 'react-native-svg';

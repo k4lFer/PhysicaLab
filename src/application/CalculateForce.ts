@@ -25,15 +25,28 @@ export type CalculateForceResponse =
 export function calculateForce(req: CalculateForceRequest): CalculateForceResponse {
   const { charges, targetId, mode } = req;
 
-  // Validación 1: debe haber al menos 2 cargas para que exista interacción
+  // ── Validación 1: mínimo 2 cargas ──
   if (charges.length < 2) {
     return { kind: 'err', message: 'Se necesitan al menos 2 cargas' };
   }
 
-  // Validación 2: la carga objetivo debe existir en el sistema
+  // ── Validación 2: objetivo existente ──
   const target = charges.find(c => c.id === targetId);
   if (!target) {
     return { kind: 'err', message: 'Carga objetivo no encontrada' };
+  }
+
+  // ── Validación 3: sin cargas superpuestas ──
+  // En 2D solo importan x e y; en 3D se evalúa x, y, z
+  const overlapping = charges.find(
+    c => c.id !== targetId
+      && c.x === target.x
+      && c.y === target.y
+      && (mode === '3D' ? c.z === target.z : true)
+  );
+  if (overlapping) {
+    const posStr = `(${target.x * 100}, ${target.y * 100}${mode === '3D' ? `, ${target.z * 100}` : ''}) cm`;
+    return { kind: 'err', message: `Cargas superpuestas: ${overlapping.label} y ${target.label} están en ${posStr}` };
   }
 
   // Delega el cálculo a la capa de dominio (CoulombCalculator)

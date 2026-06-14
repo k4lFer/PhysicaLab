@@ -1,3 +1,8 @@
+// ============================================================
+// Graph3D.tsx — Gráfica isométrica 3D (SVG nativo)
+// Capa: Presentación (fallback nativo para 3D)
+// ============================================================
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LayoutChangeEvent, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Polygon, Rect, Text as SvgText } from 'react-native-svg';

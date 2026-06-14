@@ -1,3 +1,8 @@
+// ============================================================
+// StepLine.tsx — Renderizador de pasos del cálculo
+// Capa: Presentación (componente atómico de visualización)
+// ============================================================
+
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MathFormula } from './MathFormula';
 import type { CoulombStep } from '@/domain/calculators/CoulombCalculator';
@@ -5,6 +10,7 @@ import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
 
 interface StepLineProps { step: CoulombStep }
 
+// Convierte texto plano con símbolos Unicode a sintaxis LaTeX
 function toLatex(s: string): string {
   if (/\\dfrac|\\mathrm|\\hat|\\bm/.test(s)) {
     return s

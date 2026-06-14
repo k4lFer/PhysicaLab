@@ -1,3 +1,8 @@
+// ============================================================
+// useThemeMode.tsx — Contexto de tema claro/oscuro con persistencia
+// Capa: Presentación (proveedor global de tema)
+// ============================================================
+
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
 
@@ -12,6 +17,7 @@ interface ThemeContextValue {
 
 const ThemeCtx = createContext<ThemeContextValue>({ mode: 'light', toggle: () => {} });
 
+// Lee el tema guardado en localStorage (web) o retorna 'light'
 function readStored(): ThemeMode {
   try {
     if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
@@ -30,6 +36,7 @@ function writeStored(mode: ThemeMode) {
   } catch {}
 }
 
+// Proveedor de tema: persiste en localStorage y expone toggle
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>('light');
   const [ready, setReady] = useState(false);

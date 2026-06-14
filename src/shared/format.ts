@@ -1,3 +1,8 @@
+// ============================================================
+// format.ts — Formateo numérico para display
+// Capa: Compartida (utilidades de presentación)
+// ============================================================
+
 export function formatNum(n: number, d = 3): string {
   if (n === 0) return '0';
   if (Math.abs(n) >= 1000 || (Math.abs(n) < 0.01 && n !== 0)) return n.toExponential(d);

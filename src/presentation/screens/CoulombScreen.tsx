@@ -1,3 +1,8 @@
+// ============================================================
+// CoulombScreen.tsx — Pantalla principal del calculador de Coulomb
+// Capa: Presentación (orquestación de UI)
+// ============================================================
+
 import { useCallback, useMemo, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { usePhysicsTheme } from '@/presentation/hooks/usePhysicsTheme';
@@ -19,6 +24,9 @@ import { PageContainer } from '@/presentation/components/ui/PageContainer';
 const MOBILE_BREAKPOINT = 768;
 type Tab = 'steps' | 'graph' | 'formulas';
 
+// ── Componente principal ──
+// Layout responsivo: sidebar (≥768px) o accordion móvil.
+// Renderiza selector 2D/3D, cargas, gráfica y resultados.
 export function CoulombScreen() {
   const theme = usePhysicsTheme();
   const { width } = useWindowDimensions();
@@ -34,6 +42,7 @@ export function CoulombScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <PageContainer wide>
+        {/* ── Selector de modo 2D / 3D ── */}
         <View style={styles.modeRow}>
           <View style={[styles.pillGroup, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
             <Pill active={mode === '2D'} onPress={() => switchMode('2D')}>2D</Pill>
@@ -45,7 +54,7 @@ export function CoulombScreen() {
         </View>
 
         <View style={[styles.layout, { flexDirection: desktop ? 'row' : 'column' }]}>
-          {/* Sidebar — desktop only */}
+          {/* ── Sidebar (desktop): cargas, objetivo, calcular, errores ── */}
           {desktop && (
             <View style={styles.sidebar}>
               <View style={styles.sidebarInner}>
@@ -60,6 +69,7 @@ export function CoulombScreen() {
                   <Icon name="plus" size={14} color={theme.textSecondary} /> Agregar carga
                 </GhostButton>
 
+                {/* Selección de carga objetivo */}
                 <View style={styles.targetSection}>
                   <Text style={[styles.targetLabel, { color: theme.textTertiary }]}>Carga objetivo</Text>
                   <View style={styles.chipRow}>
@@ -73,6 +83,7 @@ export function CoulombScreen() {
                   <Icon name="calc" size={16} color="#fff" /> Calcular fuerza neta
                 </PrimaryButton>
 
+                {/* Bloque de error (validaciones) */}
                 {error && (
                   <View style={[styles.errorBox, { backgroundColor: theme.positive + '15' }]}>
                     <Text style={styles.errorText}>{error}</Text>
@@ -82,9 +93,9 @@ export function CoulombScreen() {
             </View>
           )}
 
-          {/* Main content */}
+          {/* ── Contenido principal ── */}
           <ScrollView style={styles.mainScroll} contentContainerStyle={styles.mainContent} nestedScrollEnabled>
-            {/* Mobile: charges accordion */}
+            {/* Mobile: cargas en acordeón plegable */}
             {!desktop && (
               <MobileChargesAccordion
                 charges={charges} mode={mode} targetId={targetId}
@@ -94,7 +105,7 @@ export function CoulombScreen() {
               />
             )}
 
-            {/* Graph */}
+            {/* ── Gráfica 2D/3D según modo ── */}
             <View style={[styles.graphCard, { borderColor: theme.border }]}>
               <View style={styles.graphContent}>
                 {charges.length > 0 && (
@@ -117,7 +128,7 @@ export function CoulombScreen() {
               </View>
             </View>
 
-            {/* Results */}
+            {/* ── Resultados: pasos, gráfica vectorial, fórmulas ── */}
             {result && (
               <ResultView
                 result={result}
@@ -134,15 +145,18 @@ export function CoulombScreen() {
   );
 }
 
+// ── Acordeón móvil: cargas, objetivo y botón calcular ──
+// Se muestra solo en viewports < 768px como reemplazo del sidebar.
 function MobileChargesAccordion({ charges, mode, targetId, onUpdate, onRemove, onSetTarget, onAdd, onCalculate, theme, error }: {
   charges: any[]; mode: '2D' | '3D'; targetId: number;
   onUpdate: any; onRemove: any; onSetTarget: any; onAdd: any; onCalculate: any;
   theme: any; error: string | null;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // acordeón cerrado por defecto
 
   return (
     <View style={[styles.accordionCard, { borderColor: theme.border, backgroundColor: theme.backgroundElement }]}>
+      {/* Header clickeable para abrir/cerrar */}
       <Pressable onPress={() => setOpen(o => !o)} style={styles.accordionHeader}>
         <View style={open && { transform: [{ rotate: '90deg' }] }}>
           <Icon name="chevron-right" size={16} color={theme.accent} />
@@ -181,6 +195,8 @@ function MobileChargesAccordion({ charges, mode, targetId, onUpdate, onRemove, o
   );
 }
 
+// ── Vista de resultados con tabs ──
+// Muestra: paso a paso, gráfica vectorial y fórmulas de referencia.
 function ResultView({ result, tab, onTabChange, charges, mode }: {
   result: CoulombResult;
   tab: Tab;
@@ -192,6 +208,7 @@ function ResultView({ result, tab, onTabChange, charges, mode }: {
 
   return (
     <View style={[styles.resultSection, { borderColor: theme.border }]}>
+      {/* ── Resumen: magnitud, componentes y ángulos ── */}
       <View style={styles.resultSummary}>
         <Text style={[styles.resultLabel, { color: theme.textTertiary }]}>
           Fuerza neta sobre {result.target.label}
@@ -214,6 +231,7 @@ function ResultView({ result, tab, onTabChange, charges, mode }: {
         </View>
       </View>
 
+      {/* ── Tabs: paso a paso / gráfica / fórmulas ── */}
       <View style={[styles.tabRow, { borderBottomColor: theme.border }]}>
         {([['steps', 'Paso a paso'], ['graph', 'Gráfica vectorial'], ['formulas', 'Fórmulas']] as const).map(([key, label]) => (
           <Pressable
@@ -277,6 +295,8 @@ function groupSteps(steps: CoulombStep[]): { title: string; steps: CoulombStep[]
   return groups;
 }
 
+// ── Contenido de la pestaña "Paso a paso" ──
+// Muestra datos iniciales y grupos colapsables de pasos del cálculo.
 function StepsContent({ result, charges, mode, theme }: {
   result: CoulombResult;
   charges: { id: number; x: number; y: number; z: number; q: number; label: string }[];
@@ -334,6 +354,8 @@ function StepsContent({ result, charges, mode, theme }: {
   );
 }
 
+// ── Contenido de la pestaña "Fórmulas" ──
+// Lista de fórmulas de referencia renderizadas con MathJax.
 function FormulasContent({ theme }: { theme: any }) {
   const formulas = [
     { latex: 'F = k \\cdot \\dfrac{|q_1 q_2|}{r^2}', label: 'Ley de Coulomb' },

@@ -123,12 +123,6 @@ export function calculateCoulombForce(
 
     steps.push({ type: 'div', text: `── Paso ${n}:  ${src.label} → ${target.label} ──` });
 
-    // Validación: no puede haber dos cargas en la misma posición
-    if (r === 0) {
-      steps.push({ type: 'error', text: `⚠ ${src.label} y ${target.label} están en la misma posición (r = 0)` });
-      return;
-    }
-
     const srcPosStr = `(${formatDist(src.x)}, ${formatDist(src.y)}${is3D ? `, ${formatDist(src.z)}` : ''})`;
     const rCm = formatNum(r * 100, 4);
     const rM = formatNum(r, 4);
