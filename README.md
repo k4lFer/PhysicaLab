@@ -57,6 +57,8 @@ graph TB
   DOMAIN --> SHARED
 ```
 
+📐 [`docs/arquitectura.mermaid`](docs/arquitectura.mermaid)
+
 ### Flujo de datos
 
 1. **Usuario** ingresa cargas y selecciona modo (2D/3D) en la UI
@@ -128,6 +130,8 @@ flowchart LR
   Resultado --> Visualizacion
 ```
 
+🔀 [`docs/flujo-calculo-fuerza.mermaid`](docs/flujo-calculo-fuerza.mermaid)
+
 ---
 
 ## Estructura del Proyecto
@@ -175,11 +179,8 @@ src/
 ├── assets/                   # Imágenes, fuentes, iconos
 ├── public/                   # Archivos estáticos web (sw.js, manifest.json)
 ├── docs/                     # Documentación
-│   ├── presentacion-coulomb.md  # 📽️ Presentación (Marp)
 │   ├── arquitectura.mermaid  # Diagrama de arquitectura
-│   ├── graph-3d-isometric.md
-│   ├── interactive-preview-graph.md
-│   └── pwa-guide.md
+│   └── flujo-calculo-fuerza.mermaid  # Diagrama de flujo Coulomb
 └── global.css                # Estilos globales
 ```
 

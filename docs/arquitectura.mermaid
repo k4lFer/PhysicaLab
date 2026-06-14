@@ -1,0 +1,35 @@
+---
+title: Arquitectura — PhysicaLab (Clean Architecture)
+---
+graph TB
+  subgraph UI["📱 CAPA DE PRESENTACIÓN"]
+    direction TB
+    A["app/ (Expo Router)"] --> B["screens/ (CoulombScreen, HomeScreen)"]
+    B --> C["components/ (ChargeCard, Graph2D, Graph3D, StepLine)"]
+    B --> D["hooks/ (useCoulomb, usePhysicsTheme)"]
+    C --> E["ui/ (Button, Pill, Chip, NumericInput)"]
+  end
+
+  subgraph APP["⚙️ CAPA DE APLICACIÓN"]
+    direction TB
+    F["CalculateForce.ts"]
+    G["CalculateElectricField.ts"]
+    H["CalculatePotential.ts"]
+  end
+
+  subgraph DOMAIN["🧠 CAPA DE DOMINIO"]
+    direction TB
+    I["entities/ (Charge.ts, Vector3.ts)"]
+    J["calculators/ (CoulombCalculator.ts)"]
+  end
+
+  subgraph SHARED["🔧 CAPA COMPARTIDA"]
+    direction TB
+    K["constants/theme.ts"]
+    L["shared/format.ts"]
+    M["assets/, public/"]
+  end
+
+  UI --> APP
+  APP --> DOMAIN
+  DOMAIN --> SHARED

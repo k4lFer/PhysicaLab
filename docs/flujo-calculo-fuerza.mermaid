@@ -1,0 +1,53 @@
+---
+title: Flujo de Cálculo — Ley de Coulomb (PhysicaLab)
+---
+flowchart LR
+  subgraph Entrada["① ENTRADA"]
+    direction TB
+    A0["Seleccionar modo<br>2D / 3D"] --> A1
+    A1["Agregar cargas<br>qᵢ (nC), xᵢ yᵢ (cm)<br>zᵢ (cm) si 3D"] --> A2
+    A2["Seleccionar<br>carga objetivo Q"]
+  end
+
+  subgraph Validacion["② VALIDACIÓN"]
+    direction TB
+    B1{"¿n ≥ 2?"}
+    B1 -- Sí --> B2
+    B1 -- No --> B99["⛔ Error:<br>min 2 cargas"]
+    B2{"¿Objetivo<br>válido?"}
+    B2 -- Sí --> B3
+    B2 -- No --> B99
+    B3{"¿r ≠ 0 para<br>todo par?"}
+    B3 -- Sí --> C
+    B3 -- No --> B98["⛔ Error:<br>cargas superpuestas"]
+  end
+
+  subgraph Calculo["③ CÁLCULO (por cada fuente i)"]
+    direction TB
+    C["Δr = rⱼ − rᵢ"] --> D
+    D["r = √(Δx² + Δy² + Δz²)"] --> E
+    E["r̂ = Δr / r"] --> F
+    F["F = k · |qᵢ| · |Q| / r²"] --> G
+    G["signo = sign(qᵢ · Q)<br>↳ atractiva / repulsiva"] --> H
+    H["Fᵢ = signo · F · r̂<br>Fxᵢ, Fyᵢ, Fzᵢ"] --> I
+    I["Fₙₑₜₐ += Fᵢ<br>(superposición)"]
+  end
+
+  subgraph Resultado["④ RESULTADO"]
+    direction TB
+    J["|Fₙₑₜₐ| = √(Fx² + Fy² + Fz²)"] --> K
+    K["θ = atan2(Fy, Fx)<br>φ = atan2(Fz, √(Fx²+Fy²))"] --> L
+    L["Mostrar vector,<br>magnitud y ángulos"]
+  end
+
+  subgraph Visualizacion["⑤ VISUALIZACIÓN"]
+    direction TB
+    M["Paso a paso<br>(LaTeX)"]
+    N["Gráfica 2D<br>(SVG)"]
+    O["Gráfica 3D<br>(Three.js)"]
+  end
+
+  Entrada --> Validacion
+  Validacion --> Calculo
+  Calculo --> Resultado
+  Resultado --> Visualizacion
